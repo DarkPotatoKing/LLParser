@@ -6,6 +6,9 @@ class Clause(object):
     def __repr__(self):
         return ' '.join(self.tokens)
 
+    def token_set(self):
+        return set([i for i in self.tokens])
+
 class Rule(object):
 
     def __init__(self, rule):
@@ -22,6 +25,10 @@ class Rule(object):
             if self.premise == clause.tokens[0]:
                 return True
         return False
+
+    def token_set(self):
+        return reduce(lambda a,b: a | b, [i.token_set() for i in self.clauses]) | set(self.premise)
+
 
 class Grammar(object):
 
@@ -41,6 +48,16 @@ class Grammar(object):
                         self.rules.append(r)
                 else:
                     self.rules.append(rule)
+
+            # filter tokens
+            self.tokens = reduce(lambda a,b: a | b, [i.token_set() for i in self.rules]) - set("'")
+            self.non_terminals = set()
+            self.terminals = set()
+            for token in self.tokens:
+                if token.isupper():
+                    self.non_terminals.add(token)
+                else:
+                    self.terminals.add(token)
 
         except IOError:
             print 'Grammar text file does not exist'
@@ -66,6 +83,18 @@ class Grammar(object):
 
         return modified_rules
 
+    def token_set(self):
+        return self.tokens
+
+    def non_terminal_token_set(self):
+        return self.non_terminals
+
+    def terminal_token_set(self):
+        return self.terminals
+
 if __name__ == '__main__':
     g = Grammar()
     print g
+    print g.token_set()
+    print 'non', g.non_terminal_token_set()
+    print 'term', g.terminal_token_set()
