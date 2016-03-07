@@ -44,6 +44,8 @@ class Grammar(object):
             for rule in rules:
                 if rule.has_direct_left_recursion():
                     modified_rules = self.remove_direct_left_recursion(rule)
+                    if rule == self.starting_rule:
+                        self.starting_rule = modified_rules[0]
                     for r in modified_rules:
                         self.rules.append(r)
                 else:
@@ -104,3 +106,4 @@ class Grammar(object):
 if __name__ == '__main__':
     g = Grammar()
     print g
+    print 'start:', g.starting_rule
