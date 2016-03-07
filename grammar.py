@@ -19,7 +19,7 @@ class Rule(object):
 
     def has_direct_left_recursion(self):
         for clause in self.clauses:
-            if self.premise in clause.tokens:
+            if self.premise == clause.tokens[0]:
                 return True
         return False
 
@@ -44,9 +44,8 @@ class Grammar(object):
         return '\n'.join([str(i) for i in self.rules])
 
     def remove_direct_left_recursion(self, rule):
-        print 'remove_direct_left_recursion:', rule
-        if rule == self.starting_rule:
-            print 'starting_rule'
+        # self.rules.remove(rule)
+        print rule
 
 if __name__ == '__main__':
     g = Grammar()
