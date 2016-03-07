@@ -59,6 +59,15 @@ class Grammar(object):
                 else:
                     self.terminals.add(token)
 
+            # get first set
+            self.first = dict()
+
+            # the first set of every terminal is itself:
+            for i in self.terminals:
+                self.first[i] = set(i)
+
+            print self.first
+
         except IOError:
             print 'Grammar text file does not exist'
 
@@ -95,6 +104,3 @@ class Grammar(object):
 if __name__ == '__main__':
     g = Grammar()
     print g
-    print g.token_set()
-    print 'non', g.non_terminal_token_set()
-    print 'term', g.terminal_token_set()
