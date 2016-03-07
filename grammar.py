@@ -31,6 +31,8 @@ class Grammar(object):
             with open(filename, 'r') as f:
                 self.rules = [Rule(i) for i in f.readlines()]
 
+            self.starting_rule = self.rules[0]
+
             # check for direct left recursion
             for rule in self.rules:
                 if rule.has_direct_left_recursion():
@@ -43,6 +45,8 @@ class Grammar(object):
 
     def remove_direct_left_recursion(self, rule):
         print 'remove_direct_left_recursion:', rule
+        if rule == self.starting_rule:
+            print 'starting_rule'
 
 if __name__ == '__main__':
     g = Grammar()
