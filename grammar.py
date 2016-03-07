@@ -52,16 +52,18 @@ class Grammar(object):
         modified_rules = list()
         recursive_clauses = list()
         non_recursive_clauses = list()
-        print 'remove_direct_left_recursion', rule
+
         for clause in rule.clauses:
             if rule.premise == clause.tokens[0]:
                 recursive_clauses.append(clause)
             else:
                 non_recursive_clauses.append(clause)
 
-        modified_rules.append(rule.premise + ' -> ' + ' | '.join([str(i) + ' ' + rule.premise + "'" for i in non_recursive_clauses]))
+        modified_rules.append(Rule(rule.premise + ' -> ' + ' | '.join([str(i) + ' ' + rule.premise + "'" for i in non_recursive_clauses])))
 
-        print modified_rules
+        recursive_clauses = [' '.join(i.tokens[1:]) for i in recursive_clauses]
+        modified_rules.append(Rule(rule.premise + "\' -> " + ' | '.join([str(i) + ' ' + rule.premise + "'" for i in recursive_clauses]) + ' | $'))
+
         return modified_rules
 
 if __name__ == '__main__':
