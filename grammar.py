@@ -1,11 +1,21 @@
-class Rule(object):
-    def __init__(self, rule):
-        rule = rule.split('->')
-        self.premise = rule[0].strip()
-        self.clauses = [i.strip() for i in rule[1].split('|')]
+class Clause(object):
+
+    def __init__(self, clause):
+        self.tokens = clause.strip().split()
 
     def __repr__(self):
-        return self.premise + ' -> ' + ' | '.join(self.clauses)
+        return ' '.join(self.tokens)
+
+class Rule(object):
+
+    def __init__(self, rule):
+        # split rule into premise and clauses
+        rule = rule.split('->')
+        self.premise = rule[0].strip()
+        self.clauses = [Clause(i) for i in rule[1].split('|')]
+
+    def __repr__(self):
+        return self.premise + ' -> ' + ' | '.join([str(i) for i in self.clauses])
 
 class Grammar(object):
 
