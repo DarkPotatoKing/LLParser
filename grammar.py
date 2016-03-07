@@ -17,18 +17,32 @@ class Rule(object):
     def __repr__(self):
         return self.premise + ' -> ' + ' | '.join([str(i) for i in self.clauses])
 
+    def has_direct_left_recursion(self):
+        for clause in self.clauses:
+            if self.premise in clause.tokens:
+                return True
+        return False
+
 class Grammar(object):
 
     def __init__(self, filename = 'grammar.txt'):
-        self.grammar = list()
+        self.rules = list()
         try:
             with open(filename, 'r') as f:
-                self.grammar = [Rule(i) for i in f.readlines()]
+                self.rules = [Rule(i) for i in f.readlines()]
+
+            # check for direct left recursion
+            for rule in self.rules:
+                if rule.has_direct_left_recursion():
+                    self.remove_direct_left_recursion(rule)
         except IOError:
             print 'Grammar text file does not exist'
 
     def __repr__(self):
-        return '\n'.join([str(i) for i in self.grammar])
+        return '\n'.join([str(i) for i in self.rules])
+
+    def remove_direct_left_recursion(self, rule):
+        print 'remove_direct_left_recursion:', rule
 
 if __name__ == '__main__':
     g = Grammar()
