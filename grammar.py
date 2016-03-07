@@ -68,10 +68,31 @@ class Grammar(object):
             for i in self.terminals:
                 self.first[i] = set(i)
 
-            print self.first
+            # recursively find the first set of every non-terminal
+            for rule in self.rules:
+                self.find_first(rule.premise)
 
+            for i in self.non_terminals:
+                print 'FIRST(' + i + ') = ' + str(self.first[i])
         except IOError:
             print 'Grammar text file does not exist'
+
+    def find_rule(self, token):
+        for rule in self.rules:
+            if token == rule.premise:
+                return rule
+
+    def find_first(self, token):
+        try:
+            return self.first[token]
+        except KeyError:
+            rule = self.find_rule(token)
+            first_tokens = [clause.tokens[0] for clause in rule.clauses]
+            first = set()
+            for t in first_tokens:
+                first = first | self.find_first(t)
+            self.first[token] = first
+            return first
 
     def __repr__(self):
         return '\n'.join([str(i) for i in self.rules])
@@ -105,5 +126,3 @@ class Grammar(object):
 
 if __name__ == '__main__':
     g = Grammar()
-    print g
-    print 'start:', g.starting_rule
