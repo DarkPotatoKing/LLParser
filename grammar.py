@@ -29,14 +29,19 @@ class Grammar(object):
         self.rules = list()
         try:
             with open(filename, 'r') as f:
-                self.rules = [Rule(i) for i in f.readlines()]
+                rules = [Rule(i) for i in f.readlines()]
 
-            self.starting_rule = self.rules[0]
+            self.starting_rule = rules[0]
 
             # check for direct left recursion
-            for rule in self.rules:
+            for rule in rules:
                 if rule.has_direct_left_recursion():
-                    self.remove_direct_left_recursion(rule)
+                    modified_rules = self.remove_direct_left_recursion(rule)
+                    for r in modified_rules:
+                        self.rules.append(r)
+                else:
+                    self.rules.append(rule)
+
         except IOError:
             print 'Grammar text file does not exist'
 
@@ -44,8 +49,20 @@ class Grammar(object):
         return '\n'.join([str(i) for i in self.rules])
 
     def remove_direct_left_recursion(self, rule):
-        # self.rules.remove(rule)
-        print rule
+        modified_rules = list()
+        recursive_clauses = list()
+        non_recursive_clauses = list()
+        print 'remove_direct_left_recursion', rule
+        for clause in rule.clauses:
+            if rule.premise == clause.tokens[0]:
+                recursive_clauses.append(clause)
+            else:
+                non_recursive_clauses.append(clause)
+
+        modified_rules.append(rule.premise + ' -> ' + ' | '.join([str(i) + ' ' + rule.premise + "'" for i in non_recursive_clauses]))
+
+        print modified_rules
+        return modified_rules
 
 if __name__ == '__main__':
     g = Grammar()
